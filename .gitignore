@@ -1,0 +1,11 @@
+
+# ignore build directories
+build/
+
+# ignore Segger Ozone user interface (UI) settings
+*.jdebug.user
+
+# Keil MDK-ARM auto generated project files
+*.uvmpw.uvgui.*
+*.uvguix.*
+JLinkLog.txt
