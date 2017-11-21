@@ -1,0 +1,6 @@
+[submodule "hodea-lib"]
+	path = hodea-lib
+	url = https://github.com/hodea/hodea-lib.git
+[submodule "hodea-stm32f0-vpkg"]
+	path = hodea-stm32f0-vpkg
+	url = https://github.com/hodea/hodea-stm32f0-vpkg.git
