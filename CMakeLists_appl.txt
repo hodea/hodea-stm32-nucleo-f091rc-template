@@ -14,9 +14,9 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 
 # ---------------------------------------- project specific settings ---
 
-set(TARGET_NAME "project_template_bootloader")
+set(TARGET_NAME "project_template_appl")
 
-set(CMAKE_SOURCE_DIR "${PROJECT_ROOT_DIR}/application")
+set(CMAKE_SOURCE_DIR "${PROJECT_ROOT_DIR}/appl")
 set(HODEA_ROOT_DIR "${PROJECT_ROOT_DIR}/hodea-lib")
 set(CMSIS_ROOT_DIR "${PROJECT_ROOT_DIR}/hodea-stm32f0-vpkg/CMSIS")
 
@@ -24,6 +24,7 @@ add_executable(${TARGET_NAME}
     "${CMAKE_SOURCE_DIR}/main.cpp"
     "${CMAKE_SOURCE_DIR}/system_stm32f0xx.cpp"
     "${CMAKE_SOURCE_DIR}/gcc/startup_stm32f091xc.s"
+    "${CMAKE_SOURCE_DIR}/../share/boot_appl_if.cpp"
     "${HODEA_ROOT_DIR}/hodea/rte/setup.cpp"
     )
 

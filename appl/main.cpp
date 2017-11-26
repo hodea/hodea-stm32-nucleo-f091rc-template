@@ -34,7 +34,7 @@
 #include <hodea/device/hal/pin_config.hpp>
 #include <hodea/rte/setup.hpp>
 #include <hodea/rte/htsc.hpp>
-#include "digio_pins.hpp"
+#include "../share/digio_pins.hpp"
 
 using namespace hodea;
 
