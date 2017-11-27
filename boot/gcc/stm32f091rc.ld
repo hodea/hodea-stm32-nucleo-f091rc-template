@@ -17,8 +17,11 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 32K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 256K
+  m_isr_vector (r)  : ORIGIN = 0x08000000, LENGTH = 0xbc
+  m_boot_info (r)   : ORIGIN = 0x080000bc, LENGTH = 0x34
+  FLASH (rx)        : ORIGIN = 0x080000f0, LENGTH = 0x1f10
+  m_boot_data (rw)  : ORIGIN = 0x20000000, LENGTH = 0x10
+  RAM (rw)          : ORIGIN = 0x20000010, LENGTH = 0x7ff0
 }
 
 /* Define output sections */
@@ -30,7 +33,15 @@ SECTIONS
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
-  } >FLASH
+  } >m_isr_vector
+
+  /* Bootloader information */
+  .boot_info :
+  {
+    . = ALIGN(4);
+    KEEP(*(.boot_info*))
+    . = ALIGN(4);
+  } >m_boot_info
 
   /* The program code and other data goes into FLASH */
   .text :
@@ -118,6 +129,11 @@ SECTIONS
     __bss_end__ = _ebss;
   } >RAM
 
+  .boot_data (NOLOAD) :
+  {
+    KEEP(*(.boot_data*))
+  } > m_boot_data
+
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
   {
@@ -128,8 +144,6 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
-
-  
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

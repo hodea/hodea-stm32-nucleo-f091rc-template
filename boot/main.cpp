@@ -39,6 +39,14 @@
 
 using namespace hodea;
 
+const Boot_info boot_info_rom 
+    __attribute__((section(".boot_info"), used)) =
+{
+    0x47110815,                 // magic
+    1,                          // version
+    "project_template Boot "    // id_string
+};
+
 /**
  * Turn on clocks for peripherals used in the application.
  */
@@ -160,7 +168,7 @@ __asm(".global __ARM_use_no_argv\n");
     init_peripheral_clocks();
     init_pins();
     rte_init();
-
+    (void) boot_info.magic;
     for (;;) {
         run_led.toggle();
         htsc::delay(htsc::ms_to_ticks(100));
