@@ -2,28 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Bootloader main code.
- *
- * This file provides the framework for a bootloader. It implements the
- * following features:
- *
- * - Provides a minimum board configuration.
- * - Enters bootloader mode in case a firmware update is requested or
- *   the application is corrupted or not present.
- * - Otherwise, if the CRC is correct it starts the application.
- *
- * Especially the I/Os, which are set to input after reset, are
- * initialized according the board layout. With that we make sure that
- * the board is always in a safe state. This also means that the bootloader
- * must be aware of the hardware, and that hardware changes require to
- * adapt the bootloader.
- *
- * The application takes over the clock and pin configuration from
- * the bootloader and builds the application specific part on top of it.
- *
- * What is not part of this framework is the code is the firmware upate
- * itself.
- *
+ * Application main code.
  * \author f.hollerer@gmx.net
  */
 #include <cstdio>
