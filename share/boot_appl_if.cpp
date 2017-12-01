@@ -50,7 +50,7 @@ uint32_t appl_vector_table_ram[nvic_vector_table_entries];
 #endif
 
 /**
- * Activate application.
+ * Enter application.
  *
  * This function branches to the application. It does not return.
  *
@@ -72,7 +72,7 @@ uint32_t appl_vector_table_ram[nvic_vector_table_entries];
  * }
  * \endcode
  */
-void activate_application()
+void enter_application()
 {
     /*
      * Copy application interrupt vector table from FLASH to SRAM.

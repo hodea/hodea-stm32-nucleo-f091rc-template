@@ -129,6 +129,7 @@ SECTIONS
     __bss_end__ = _ebss;
   } >RAM
 
+  /* Persistent data shared between bootloader and application. */
   .boot_data (NOLOAD) :
   {
     KEEP(*(.boot_data*))

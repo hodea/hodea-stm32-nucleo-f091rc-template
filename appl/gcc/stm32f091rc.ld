@@ -17,8 +17,12 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 32K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 256K
+  m_appl_info (r)   : ORIGIN = 0x80002000, LENGTH = 0x40
+  m_isr_vector (r)  : ORIGIN = 0x80002040, LENGTH = 0xbc
+  FLASH (rx)        : ORIGIN = 0x080020fc, LENGTH = 0x3df04
+  m_boot_data (rw)  : ORIGIN = 0x20000000, LENGTH = 0x10
+  RAM (rw)          : ORIGIN = 0x20000010, LENGTH = 0x7ff0
+
 }
 
 /* Define output sections */
@@ -30,7 +34,16 @@ SECTIONS
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
-  } >FLASH
+  } >m_isr_vector
+
+  /* Application information */
+  .appl_info :
+  {
+    . = ALIGN(4);
+    KEEP(*(.appl_info*))
+    . = ALIGN(4);
+  } >m_appl_info
+
 
   /* The program code and other data goes into FLASH */
   .text :
@@ -118,6 +131,12 @@ SECTIONS
     __bss_end__ = _ebss;
   } >RAM
 
+  /* Persistent data shared between bootloader and application. */
+  .boot_data (NOLOAD) :
+  {
+    KEEP(*(.boot_data*))
+  } > m_boot_data
+
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
   {
@@ -128,8 +147,6 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
-
-  
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

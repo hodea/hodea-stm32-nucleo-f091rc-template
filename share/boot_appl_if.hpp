@@ -20,7 +20,10 @@
  */
 constexpr int nvic_vector_table_entries = 47;
 
-constexpr uintptr_t appl_vector_table_rom_addr = 0x08001840U;
+constexpr uintptr_t boot_info_addr = 0x080000bcU;
+constexpr uintptr_t appl_info_addr = 0x08002000U;
+constexpr uintptr_t appl_vector_table_rom_addr = 0x08002040U;
+constexpr uintptr_t appl_end_addr = 0x08003fffU;
 
 /**
  * Persistent data in SRAM shared between bootloader and application.
@@ -41,29 +44,58 @@ extern Boot_data boot_data;
  * Information about the bootloader.
  */
 typedef struct {
-    uint32_t magic;     //!< Magic number used to check integrity.
+    uint16_t magic;     //!< Magic number used to check integrity.
     uint32_t version;   //!< Bootloader version information.
     char id_string[30]; //!< Textual information about the bootloader image.
 } Boot_info;
 
-static const Boot_info& boot_info = *reinterpret_cast<Boot_info*>(0x2000);
+static const Boot_info& boot_info =
+    *reinterpret_cast<Boot_info*>(boot_info_addr);
+
+constexpr uint16_t boot_magic = (0xa400 | sizeof(Boot_info));
 
 /**
- * Activate bootloader.
+ * Information about the application.
+ */
+typedef struct {
+    uint16_t magic;      //!< Magic number used to check integrity.
+    uint16_t ignore_crc; //!< Ignores CRC if set to ignore_appl_crc_key
+
+    /**
+     * CRC-32 over application code.
+     * The CRC is calculated from the version member of this structure
+     * till appl_end_addr.
+     *
+     * (Ethernet) polynomial: 0x4C11DB7
+     * CRC initial value: 0xffffffff
+     */
+    uint32_t crc;
+    uint32_t version;   //!< Application version information.
+    char id_string[30]; //!< Textual information about the bootloader image.
+} Appl_info;
+
+static const Appl_info& appl_info =
+    *reinterpret_cast<Appl_info*>(appl_info_addr);
+
+constexpr uint16_t ignore_appl_crc_key = 0xb0c1;
+constexpr uint16_t appl_magic = (0x6100 | sizeof(Appl_info));
+
+/**
+ * Enter bootloader.
  *
  * This function branches to the bootloader. It does not return.
  */
-[[noreturn]] static inline void activate_bootloader()
+[[noreturn]] static inline void enter_bootloader()
 {
     NVIC_SystemReset();
     for (;;) ;              // avoid warning about [[noreturn]]
 }
 
 /**
- * Activate application.
+ * Enter application.
  *
  * This function branches to the application. It does not return.
  */
-[[noreturn]] void activate_application();
+[[noreturn]] void enter_application();
 
 #endif /*!_BOOT_APPL_IF_HPP_ */

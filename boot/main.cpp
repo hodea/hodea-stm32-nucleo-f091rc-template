@@ -42,9 +42,9 @@ using namespace hodea;
 const Boot_info boot_info_rom 
     __attribute__((section(".boot_info"), used)) =
 {
-    0x47110815,                 // magic
+    boot_magic,                 // magic
     1,                          // version
-    "project_template Boot "    // id_string
+    "project_template boot"     // id_string
 };
 
 /**
@@ -52,7 +52,7 @@ const Boot_info boot_info_rom
  */
 static void init_peripheral_clocks(void)
 {
-    set_bit(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
+    set_bit(RCC->AHBENR, RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOCEN);
     set_bit(RCC->APB2ENR, RCC_APB2ENR_SYSCFGCOMPEN);
 }
 
@@ -62,7 +62,7 @@ static void init_peripheral_clocks(void)
  * \verbatim
  * Pin  Name            Dir     AF      Function
  * 1    VBAT
- * 2    PC13            I               unused
+ * 2    PC13            I               B_USER, blue user button
  * 3    PC14            I               unused
  * 4    PC15            I               unused
  * 5    PF0             I               unused
@@ -168,9 +168,11 @@ __asm(".global __ARM_use_no_argv\n");
     init_peripheral_clocks();
     init_pins();
     rte_init();
-    (void) boot_info.magic;
-    for (;;) {
+
+    while (!user_button.is_pressed()) {
         run_led.toggle();
         htsc::delay(htsc::ms_to_ticks(100));
     }
+
+    enter_application();
 }
