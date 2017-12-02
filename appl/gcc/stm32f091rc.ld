@@ -17,11 +17,12 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-  m_appl_info (r)   : ORIGIN = 0x80002000, LENGTH = 0x40
-  m_isr_vector (r)  : ORIGIN = 0x80002040, LENGTH = 0xbc
-  FLASH (rx)        : ORIGIN = 0x080020fc, LENGTH = 0x3df04
-  m_boot_data (rw)  : ORIGIN = 0x20000000, LENGTH = 0x10
-  RAM (rw)          : ORIGIN = 0x20000010, LENGTH = 0x7ff0
+  m_appl_info (r)           : ORIGIN = 0x08002000, LENGTH = 0x40
+  m_isr_vector (r)          : ORIGIN = 0x08002040, LENGTH = 0xbc
+  FLASH (rx)                : ORIGIN = 0x080020fc, LENGTH = 0x3df04
+  m_appl_vector_ram (rw)    : ORIGIN = 0x20000000, LENGTH = 0xbc
+  m_boot_data (rw)          : ORIGIN = 0x200000bc, LENGTH = 0x10
+  RAM (rw)                  : ORIGIN = 0x200000d0, LENGTH = 0x7f30
 
 }
 
@@ -130,6 +131,12 @@ SECTIONS
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
   } >RAM
+
+  /* Copy of application interrupt vector table in RAM. */
+  .appl_vector_ram (NOLOAD) :
+  {
+    KEEP(*(.appl_vector_ram*))
+  } > m_appl_vector_ram
 
   /* Persistent data shared between bootloader and application. */
   .boot_data (NOLOAD) :

@@ -12,7 +12,8 @@ Boot_data boot_data __attribute__((section(".boot_data"), used));
 /**
  * Copy of the application interrupt vector table in SRAM.
  */
-uint32_t appl_vector_table_ram[nvic_vector_table_entries];
+uint32_t __attribute__((section(".appl_vector_ram"), used))
+    appl_vector_table_ram[nvic_vector_table_entries];
 
 #if defined __GNUC__
 

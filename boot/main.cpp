@@ -173,5 +173,9 @@ __asm(".global __ARM_use_no_argv\n");
         htsc::delay(htsc::ms_to_ticks(100));
     }
 
+    while (user_button.is_pressed()) {
+        htsc::delay(htsc::ms_to_ticks(100));
+    }
+
     enter_application();
 }
