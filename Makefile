@@ -29,7 +29,9 @@ ifdef CURRENT_TARGET
 
 BUILD_DIR := $(BUILD_ROOT_DIR)/$(CURRENT_TARGET)
 
-$(CURRENT_TARGET): $(BUILD_DIR)/CMakeLists.txt
+$(CURRENT_TARGET): $(BUILD_DIR)/CMakeLists.txt build_target
+
+build_target:
 	make -C $(BUILD_DIR)
 
 $(BUILD_DIR)/CMakeLists.txt: \

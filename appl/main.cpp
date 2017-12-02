@@ -10,6 +10,7 @@
 #include <hodea/core/bitmanip.hpp>
 #include <hodea/device/hal/device_setup.hpp>
 #include <hodea/device/hal/pin_config.hpp>
+#include <hodea/device/hal/retarget_stdout_uart.hpp>
 #include <hodea/rte/setup.hpp>
 #include <hodea/rte/htsc.hpp>
 #include "../share/digio_pins.hpp"
@@ -27,6 +28,23 @@ const Appl_info appl_info_rom
     "project_template appl"     // id_string
 };
 
+/**
+ * Initialization.
+ */
+static void init()
+{
+    retarget_init(USART2, baud_to_brr(115200));
+    rte_init();
+}
+
+/**
+ * Shutdown.
+ */
+static void deinit()
+{
+    rte_deinit();
+    retarget_deinit();
+}
 
 #if defined __ARMCC_VERSION && (__ARMCC_VERSION >= 6010050)
 // Build works with -O3, but fails with -O0.
@@ -36,7 +54,9 @@ __asm(".global __ARM_use_no_argv\n");
 
 [[noreturn]] int main()
 {
-    rte_init();
+    init();
+
+    printf("executing application\n");
 
     while (!user_button.is_pressed()) {
         run_led.toggle();
@@ -47,5 +67,6 @@ __asm(".global __ARM_use_no_argv\n");
         htsc::delay(htsc::ms_to_ticks(200));
     }
 
+    deinit();
     enter_bootloader();
 }

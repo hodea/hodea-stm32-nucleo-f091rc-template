@@ -24,6 +24,7 @@ add_executable(${TARGET_NAME}
     "${CMAKE_SOURCE_DIR}/system_stm32f0xx.cpp"
     "${CMAKE_SOURCE_DIR}/gcc/startup_stm32f091xc.s"
     "${CMAKE_SOURCE_DIR}/../share/boot_appl_if.cpp"
+    "${HODEA_ROOT_DIR}/hodea/device/stm32/retarget_stdout_uart.cpp"
     "${HODEA_ROOT_DIR}/hodea/rte/setup.cpp"
     )
 
@@ -56,11 +57,13 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(CMAKE_C_FLAGS "\
     -g -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections \
-    -fno-common -mcpu=cortex-m0 -mthumb -std=c11"
+    -fno-common -mcpu=cortex-m0 -mthumb -std=c11 \
+    -fno-rtti -fno-exceptions"
     )
 set(CMAKE_CXX_FLAGS "\
     -g -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections \
-    -fno-common -mcpu=cortex-m0 -mthumb -std=c++11"
+    -fno-common -mcpu=cortex-m0 -mthumb -std=c++11 \
+    -fno-rtti -fno-exceptions"
     )
 
 set(CMAKE_EXE_LINKER_FLAGS "\

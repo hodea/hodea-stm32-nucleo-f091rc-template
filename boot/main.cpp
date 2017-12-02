@@ -31,6 +31,7 @@
 #include <hodea/core/bitmanip.hpp>
 #include <hodea/device/hal/device_setup.hpp>
 #include <hodea/device/hal/pin_config.hpp>
+#include <hodea/device/hal/retarget_stdout_uart.hpp>
 #include <hodea/rte/setup.hpp>
 #include <hodea/rte/htsc.hpp>
 #include "../share/digio_pins.hpp"
@@ -49,10 +50,11 @@ const Boot_info boot_info_rom
 /**
  * Turn on clocks for peripherals used in the application.
  */
-static void init_peripheral_clocks(void)
+static void init_peripheral_clocks()
 {
     set_bit(RCC->AHBENR, RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOCEN);
     set_bit(RCC->APB2ENR, RCC_APB2ENR_SYSCFGCOMPEN);
+    set_bit(RCC->APB1ENR, RCC_APB1ENR_USART2EN);
 }
 
 /**
@@ -75,8 +77,8 @@ static void init_peripheral_clocks(void)
  * 13   VDDA
  * 14   PA0             I               unused
  * 15   PA1             I               unused
- * 16   PA2             I               unused
- * 17   PA3             I               unused
+ * 16   PA2/USART2_TX   O       AF1     unused
+ * 17   PA3/USART2_RX   I       AF1     unused
  * 18   VSS
  * 19   VDD
  * 20   PA4             I               unused
@@ -146,14 +148,45 @@ static void init_peripheral_clocks(void)
  * - GPIOx_AFRL, GPIOx_AFRH
  *      all pins set to AF0 (active if alternate function mode selected)
  */
-static void init_pins(void)
+static void init_pins()
 {
+    // Configure pin af register.
+    Config_gpio_af{GPIOA}
+        .pin(2, Gpio_pin_af::af1)
+        .pin(2, Gpio_pin_af::af1)
+        .write();
+
     // Configure pin mode register.
     Config_gpio_mode{GPIOA}
+        .pin(2, Gpio_pin_mode::af)
+        .pin(3, Gpio_pin_mode::af)
         .pin(5, Gpio_pin_mode::output)
         .pin(13, Gpio_pin_mode::af)
         .pin(14, Gpio_pin_mode::af)
         .write();
+}
+
+/**
+ * Initialization.
+ */
+static void init()
+{
+    init_peripheral_clocks();
+    init_pins();
+    retarget_init(USART2, baud_to_brr(115200));
+    rte_init();
+}
+
+/**
+ * Shutdown.
+ *
+ * \note
+ * The application takes over the clock tree and pin configuration.
+ */
+static void deinit()
+{
+    rte_deinit();
+    retarget_deinit();
 }
 
 #if defined __ARMCC_VERSION && (__ARMCC_VERSION >= 6010050)
@@ -164,9 +197,9 @@ __asm(".global __ARM_use_no_argv\n");
 
 [[noreturn]] int main()
 {
-    init_peripheral_clocks();
-    init_pins();
-    rte_init();
+    init();
+
+    printf("executing bootloader\n");
 
     while (!user_button.is_pressed()) {
         run_led.toggle();
@@ -177,5 +210,6 @@ __asm(".global __ARM_use_no_argv\n");
         htsc::delay(htsc::ms_to_ticks(100));
     }
 
+    deinit();
     enter_application();
 }
