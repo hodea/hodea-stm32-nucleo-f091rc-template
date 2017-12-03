@@ -23,6 +23,7 @@ MEMORY
   m_appl_vector_ram (rw)    : ORIGIN = 0x20000000, LENGTH = 0xbc
   m_boot_data (rw)          : ORIGIN = 0x200000bc, LENGTH = 0x10
   RAM (rw)                  : ORIGIN = 0x200000d0, LENGTH = 0x7f30
+  m_option_byte (r)         : ORIGIN = 0x1ffff800, LENGTH = 0x10
 }
 
 /* Define output sections */
@@ -152,6 +153,12 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
+
+  /* option byte */
+  .option_byte :
+  {
+    KEEP(*(.option_byte*))
+  } > m_option_byte
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
