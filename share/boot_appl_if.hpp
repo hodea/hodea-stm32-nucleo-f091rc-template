@@ -4,8 +4,8 @@
 /**
  * Interface between bootloader and application code.
  */
-#if !defined _BOOT_APPL_IF_HPP_
-#define _BOOT_APPL_IF_HPP_
+#if !defined BOOT_APPL_IF_HPP
+#define BOOT_APPL_IF_HPP
 
 #include <hodea/core/cstdint.hpp>
 #include <hodea/device/hal/device_setup.hpp>
@@ -97,4 +97,4 @@ constexpr uint16_t appl_magic = (0x6100 | sizeof(Appl_info));
  */
 [[noreturn]] void enter_application();
 
-#endif /*!_BOOT_APPL_IF_HPP_ */
+#endif /*!BOOT_APPL_IF_HPP */

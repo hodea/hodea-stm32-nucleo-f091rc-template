@@ -4,8 +4,8 @@
 /**
  * Digital I/O pins used throughout the project.
  */
-#if !defined _DIGIO_PINS_HPP_
-#define _DIGIO_PINS_HPP_
+#if !defined DIGIO_PINS_HPP
+#define DIGIO_PINS_HPP
 
 #include <hodea/device/hal/digio.hpp>
 
@@ -24,4 +24,4 @@ public:
 
 constexpr User_button user_button{GPIOC_BASE, 13};
 
-#endif /*!_DIGIO_PINS_HPP_ */
+#endif /*!DIGIO_PINS_HPP */
