@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * Option byte.
+ * Option bytes.
  * \author f.hollerer@gmx.net
  */
 #include <hodea/core/cstdint.hpp>
@@ -10,7 +10,7 @@
 
 using namespace hodea;
 
-constexpr uint16_t add_complement(uint8_t v)
+constexpr uint16_t add_complement(unsigned v)
 {
     return ((~v & 0xff) << 8) | v;
 }
@@ -27,10 +27,10 @@ struct Option_byte {
 };
 
 const Option_byte option_byte 
-    __attribute__((section(".option_byte"), used)) =
+    __attribute__((section(".option_bytes"), used)) =
 {
     .rdp = add_complement(0xaa),
-    .user = add_complement(0xff),
+    .user = add_complement(0xfe),
     .data0 = add_complement(0xff),
     .data1 = add_complement(0xff),
     .wrp0 = add_complement(0xff),
