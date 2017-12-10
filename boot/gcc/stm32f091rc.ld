@@ -1,8 +1,5 @@
 /*
- * gcc linker script for stm32f091rc MCUs.
- *
- * This file is copied from a demo project shipped with the
- * STM32CubeF0 firmware package provided by the chip vendor.
+ * gcc linker script for the bootloader.
  */
 
 /* Entry Point */

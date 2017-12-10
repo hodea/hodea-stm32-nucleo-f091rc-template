@@ -1,8 +1,5 @@
 /*
- * gcc linker script for stm32f091rc MCUs.
- *
- * This file is copied from a demo project shipped with the
- * STM32CubeF0 firmware package provided by the chip vendor.
+ * gcc linker script for the application.
  */
 
 /* Entry Point */
@@ -17,25 +14,25 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
+  m_bootloader (rx)         : ORIGIN = 0x08000000, LENGTH = 0x2000
   m_appl_info (r)           : ORIGIN = 0x08002000, LENGTH = 0x40
   m_isr_vector (r)          : ORIGIN = 0x08002040, LENGTH = 0xbc
   FLASH (rx)                : ORIGIN = 0x080020fc, LENGTH = 0x3df04
   m_appl_vector_ram (rw)    : ORIGIN = 0x20000000, LENGTH = 0xbc
   m_boot_data (rw)          : ORIGIN = 0x200000bc, LENGTH = 0x10
   RAM (rw)                  : ORIGIN = 0x200000d0, LENGTH = 0x7f30
-
+  m_option_bytes (r)        : ORIGIN = 0x1ffff800, LENGTH = 0x10
+/*  m_option_bytes (r)        : ORIGIN = 0x06000000, LENGTH = 0x10 */
 }
 
 /* Define output sections */
 SECTIONS
 {
-  /* The startup code goes first into FLASH */
-  .isr_vector :
+  /* bootloader */
+  .bootloader :
   {
-    . = ALIGN(4);
-    KEEP(*(.isr_vector)) /* Startup code */
-    . = ALIGN(4);
-  } >m_isr_vector
+    KEEP(*(.bootloader*))
+  } > m_bootloader
 
   /* Application information */
   .appl_info :
@@ -44,6 +41,14 @@ SECTIONS
     KEEP(*(.appl_info*))
     . = ALIGN(4);
   } >m_appl_info
+
+  /* Application vector table */
+  .isr_vector :
+  {
+    . = ALIGN(4);
+    KEEP(*(.isr_vector)) /* Startup code */
+    . = ALIGN(4);
+  } >m_isr_vector
 
 
   /* The program code and other data goes into FLASH */
@@ -154,6 +159,12 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
+
+  /* option bytes */
+  .option_bytes :
+  {
+    KEEP(*(.option_bytes*))
+  } > m_option_bytes
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

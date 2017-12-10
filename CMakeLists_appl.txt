@@ -23,6 +23,7 @@ add_executable(${TARGET_NAME}
     "${CMAKE_SOURCE_DIR}/main.cpp"
     "${CMAKE_SOURCE_DIR}/system_stm32f0xx.cpp"
     "${CMAKE_SOURCE_DIR}/gcc/startup_stm32f091xc.s"
+    "${CMAKE_SOURCE_DIR}/gcc/bootloader_binary.s"
     "${CMAKE_SOURCE_DIR}/../share/boot_appl_if.cpp"
     "${HODEA_ROOT_DIR}/hodea/device/stm32/retarget_stdout_uart.cpp"
     "${HODEA_ROOT_DIR}/hodea/rte/setup.cpp"
@@ -60,11 +61,14 @@ set(CMAKE_C_FLAGS "\
     -fno-common -mcpu=cortex-m0 -mthumb -std=c11 \
     -fno-rtti -fno-exceptions"
     )
+
 set(CMAKE_CXX_FLAGS "\
     -g -Wall -Wextra -ffreestanding -ffunction-sections -fdata-sections \
     -fno-common -mcpu=cortex-m0 -mthumb -std=c++11 \
     -fno-rtti -fno-exceptions"
     )
+
+set(CMAKE_ASM_FLAGS ${CMAKE_C_FLAGS})
 
 set(CMAKE_EXE_LINKER_FLAGS "\
     --specs=nosys.specs --specs=nano.specs -Xlinker --gc-sections \
@@ -90,8 +94,8 @@ set(CMAKE_CXX_FLAGS "\
 # ----------------------------------------------- .bin and .hex file ---
 
 add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-     ${CMAKE_OBJCOPY} -Obinary ${TARGET_NAME}.elf ${TARGET_NAME}.bin
-     )
+    ${CMAKE_OBJCOPY} -Obinary ${TARGET_NAME}.elf ${TARGET_NAME}.bin
+    )
 add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-     ${CMAKE_OBJCOPY} -Oihex ${TARGET_NAME}.elf ${TARGET_NAME}.hex
-     )
+    ${CMAKE_OBJCOPY} -Oihex ${TARGET_NAME}.elf ${TARGET_NAME}.hex
+    )
