@@ -10,6 +10,7 @@
       <TargetName>project_template_boot</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>6070000::V6.7::.\ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -335,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\hodea-stm32f0-vpkg\CMSIS\Include;..\hodea-stm32f0-vpkg\CMSIS\Device\ST\STM32F0xx\Include;..\hodea-lib;..\share</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -378,6 +379,43 @@
       <Groups>
         <Group>
           <GroupName>Source</GroupName>
+          <Files>
+            <File>
+              <FileName>system_stm32f0xx.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\boot\system_stm32f0xx.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32f091xc.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\boot\arm\startup_stm32f091xc.s</FilePath>
+            </File>
+            <File>
+              <FileName>main.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\boot\main.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>option_bytes.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\boot\option_bytes.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>boot_appl_if.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\share\boot_appl_if.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>setup.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\hodea-lib\hodea\rte\setup.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>retarget_stdout_uart.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\hodea-lib\hodea\device\stm32\retarget_stdout_uart.cpp</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

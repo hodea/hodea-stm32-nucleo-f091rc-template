@@ -15,8 +15,6 @@ Boot_data boot_data __attribute__((section(".boot_data"), used));
 uint32_t __attribute__((section(".appl_vector_ram"), used))
     appl_vector_table_ram[nvic_vector_table_entries];
 
-#if defined __GNUC__
-
 [[noreturn]] void jump_to_appl()
 {
     asm volatile(
@@ -24,30 +22,13 @@ uint32_t __attribute__((section(".appl_vector_ram"), used))
         "ldr r1, [r0]\n\t"      // load stack pointer initial value
         "msr msp, r1\n\t"       // set stack pointer
         "isb\n\t"
-        "add r0, #4\n\t"        // load reset vector
+        "adds r0, #4\n\t"        // load reset vector
         "ldr r1, [r0]\n\t"      
         "bx  r1\n\t"            // branch to reset vector
         :::"memory"
         );
     for (;;) ;                  // avoid warning about [[noreturn]]
 }
-
-#elif defined __ARMCC_VERSION && (__ARMCC_VERSION >= 6010050)
-
-[[noreturn]] __asm static void jump_to_appl(void)
-{
-    EXTERN  appl_vector_table_ram
-
-    ldr r0, =appl_vector_table_ram  ; stack pointer initial value
-    ldr r1, [r0]
-    msr msp, r1
-    isb
-    adds r0, #4                     ; reset vector
-    ldr r1, [r0]
-    bx r1                           ; branch to reset vector
-}
-
-#endif
 
 /**
  * Enter application.
