@@ -22,7 +22,7 @@ uint32_t __attribute__((section(".appl_vector_ram"), used))
         "ldr r1, [r0]\n\t"      // load stack pointer initial value
         "msr msp, r1\n\t"       // set stack pointer
         "isb\n\t"
-        "adds r0, #4\n\t"        // load reset vector
+        "add r0, #4\n\t"        // load reset vector
         "ldr r1, [r0]\n\t"      
         "bx  r1\n\t"            // branch to reset vector
         :::"memory"
