@@ -18,11 +18,12 @@ uint32_t __attribute__((section(".appl_vector_ram"), used))
 [[noreturn]] void jump_to_appl()
 {
     asm volatile(
+        ".syntax unified\n\t"
         "ldr r0, =appl_vector_table_ram\n\t"
         "ldr r1, [r0]\n\t"      // load stack pointer initial value
         "msr msp, r1\n\t"       // set stack pointer
         "isb\n\t"
-        "add r0, #4\n\t"        // load reset vector
+        "adds r0, #4\n\t"        // load reset vector
         "ldr r1, [r0]\n\t"      
         "bx  r1\n\t"            // branch to reset vector
         :::"memory"
