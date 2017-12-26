@@ -5,7 +5,7 @@
 ; the application binary.
 ; @author f.hollerer@gmx.net
 
-	AREA bootloader_sec, CODE, READONLY
+	AREA bootloader, CODE, READONLY
         EXPORT __bootloader
 
 __bootloader
@@ -14,7 +14,8 @@ __bootloader
         ; the bootloader binary exists for including.
 	INCBIN ..\..\MDK-ARM\build\boot\bootloader.bin\BOOT
 
-	AREA option_bytes_sec, READONLY
+
+	AREA option_bytes, READONLY
         EXPORT __option_bytes
 
 __option_bytes

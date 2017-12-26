@@ -1,18 +1,21 @@
 ; *************************************************************
-; *** Scatter-Loading Description File for bootlader        ***
+; *** Scatter-Loading Description File for application      ***
 ; *************************************************************
 
-LR_BOOT 0x08000000 0x00002000
+
+LR_APPL_INFO 0x08002000 0x00000040
 {
-  ; fromelf names the binary file after the first exec region entry.
-  ; Note: This is probably a bug in fromelf.
-  BOOT 0x08000000 0xbc
+  APPL_INFO +0
+  {
+    *(.appl_info, +First)
+  }
+}
+
+LR_APPL_MAIN 0x08002040 0x0003ffc0
+{
+  APPL_MAIN 0x08002040
   {
     *(RESET, +First)
-  }
-  BOOT_MAIN 0x080000bc 0x1f44
-  {
-    *(.boot_info, +First)
     *(InRoot$$Sections)
     .ANY (+RO)
     .ANY (+XO)
@@ -30,11 +33,19 @@ LR_BOOT 0x08000000 0x00002000
   }
 }
 
+LR_BOOT 0x08000000 0x00002000
+{
+  ER_BOOT +0
+  {
+    *(bootloader, +First)
+  }
+}
+
 LR_OPTION_BYTES 0x1FFFF800 16
 {
   OPTION_BYTES +0
   {
-    *(.option_bytes, +First)
+    *(option_bytes, +First)
   }
 }
 
