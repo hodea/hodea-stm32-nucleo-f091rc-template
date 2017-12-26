@@ -6,13 +6,13 @@
 ; @author f.hollerer@gmx.net
 
 	AREA bootloader_sec, CODE, READONLY
-        EXPORT __bootloader_image
+        EXPORT __bootloader
 
-__bootloader_image
+__bootloader
 |__tagsym$$used|
         ; Note: The bootloader project must be built first so that
         ; the bootloader binary exists for including.
-	INCBIN ..\build\bootloader\bootloader_image.bin\ER_BOOT
+	INCBIN ..\..\MDK-ARM\build\boot\bootloader.bin\BOOT
 
 	AREA option_bytes_sec, READONLY
         EXPORT __option_bytes
@@ -21,7 +21,7 @@ __option_bytes
 ||__tagsym$$used||
         ; Note: The bootloader project must be built first so that
         ; the bootloader binary exists for including.
-	INCBIN ..\build\bootloader\bootloader_image.bin\OPTION_BYTES
+	INCBIN ..\..\MDK-ARM\build\boot\bootloader.bin\OPTION_BYTES
 
         KEEP |__tagsym$$used|
         KEEP ||__tagsym$$used||

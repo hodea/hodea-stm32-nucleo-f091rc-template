@@ -15,7 +15,7 @@ constexpr uint16_t add_complement(unsigned v)
     return ((~v & 0xff) << 8) | v;
 }
 
-struct Option_byte {
+struct Option_bytes {
     uint16_t rdp;
     uint16_t user;
     uint16_t data0;
@@ -26,11 +26,11 @@ struct Option_byte {
     uint16_t wrp3;
 };
 
-const Option_byte option_byte 
-    __attribute__((section(".option_bytes"), used)) =
+ const Option_bytes option_bytes 
+     __attribute__((section(".option_bytes"), used)) =
 {
     .rdp = add_complement(0xaa),
-    .user = add_complement(0xfe),
+    .user = add_complement(0xff), // bit 0: 0 = hardware, 1 = software watchdog
     .data0 = add_complement(0xff),
     .data1 = add_complement(0xff),
     .wrp0 = add_complement(0xff),
