@@ -63,9 +63,10 @@ __asm(".global __ARM_use_no_argv\n");
         Htsc::delay(Htsc::ms_to_ticks(200));
     }
 
-    while (user_button.is_pressed()) {
-        Htsc::delay(Htsc::ms_to_ticks(200));
-    }
+    while (user_button.is_pressed()) ;   // wait till button is released
+    Htsc::delay(Htsc::ms_to_ticks(100)); // care about bouncing 
+
+    signal_update_request();
 
     deinit();
     enter_bootloader();

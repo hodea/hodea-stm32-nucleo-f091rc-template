@@ -26,6 +26,7 @@ add_executable(${TARGET_NAME}
     "${CMAKE_SOURCE_DIR}/gcc/startup_stm32f091xc.s"
     "${CMAKE_SOURCE_DIR}/../share/boot_appl_if.cpp"
     "${HODEA_ROOT_DIR}/hodea/device/stm32/retarget_stdout_uart.cpp"
+    "${HODEA_ROOT_DIR}/hodea/device/stm32/bls.cpp"
     "${HODEA_ROOT_DIR}/hodea/rte/setup.cpp"
     )
 

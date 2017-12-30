@@ -27,11 +27,14 @@
  * \author f.hollerer@gmx.net
  */
 #include <cstdio>
+#include <cstring>
 #include <hodea/core/cstdint.hpp>
 #include <hodea/core/bitmanip.hpp>
 #include <hodea/device/hal/device_setup.hpp>
 #include <hodea/device/hal/pin_config.hpp>
 #include <hodea/device/hal/retarget_stdout_uart.hpp>
+#include <hodea/device/hal/cpu.hpp>
+#include <hodea/device/hal/bls.hpp>
 #include <hodea/rte/setup.hpp>
 #include <hodea/rte/htsc.hpp>
 #include "../share/digio_pins.hpp"
@@ -46,6 +49,9 @@ const Boot_info boot_info_rom
     1,                          // version
     "project_template boot"     // id_string
 };
+
+constexpr Htsc_timer::Ticks no_activity_timeout =
+    Htsc_timer::sec_to_ticks(10);
 
 /**
  * Turn on clocks for peripherals used in the application.
@@ -167,26 +173,96 @@ static void init_pins()
 }
 
 /**
- * Initialization.
+ * Conditionally initialize boot_data.
+ *
+ * The \a boot_data is used to pass information from the application
+ * to the bootloader in the case a firmware update is requested.
+ *
+ * Therefore, the \a boot_data is persistent. It is initialized with 0
+ * under the following conditions:
+ *
+ * - The bootloader is entered due to hardware related resets, e.g.
+ *   power-on reset, watchdog, etc.
+ * - The bootloader is entered without firmware update request being set.
+ *
+ * \note
+ * On ST devices a software reset causes the reset pin to be asserted in
+ * order to reset the external circuit. Therefore, Reset_cause::software
+ * and Reset_cause::reset_pin are set in this case when we query the
+ * reset cause.
  */
-static void init()
+static void init_boot_data(void)
+{
+    Reset_cause::Type rst;
+
+    rst = get_reset_cause();
+    clear_reset_causes();
+
+    /*
+     * Software reset flag and PIN reset flag always come together when
+     * a reset is triggered by software.
+     */
+    Reset_cause::Type sw = Reset_cause::software | Reset_cause::reset_pin;
+    if ((rst == sw) && is_update_requested())
+        return;     // skip initialization
+        
+    std::memset(&boot_data, 0, sizeof(boot_data));
+}
+
+/**
+ * Minimum required board initialization.
+ *
+ * This function sets up the minimum required board configuration,
+ * regardless of whether we subsequently have to fall into bootloader mode
+ * or jump directly into the application code.
+ */
+static void init_minimum()
 {
     init_peripheral_clocks();
     init_pins();
+    init_boot_data();
+}
+
+/**
+ * Main initialization when falling into bootloader mode.
+ */
+static void init()
+{
     retarget_init(USART2, baud_to_brr(115200));
     rte_init();
 }
 
 /**
- * Shutdown.
- *
- * \note
- * The application takes over the clock tree and pin configuration.
+ * De-initialization to bring board into a safe state.
  */
 static void deinit()
 {
     rte_deinit();
     retarget_deinit();
+}
+
+/**
+ * Test if application code is valid.
+ */
+static bool is_appl_valid()
+{
+    if (!is_appl_info_sane())
+        return false;
+
+    uint32_t crc;
+
+    crc = bls_progmem_crc(
+                &appl_info.version,
+                reinterpret_cast<uint32_t*>(appl_end_addr & ~3U)
+                );
+
+    boot_data.appl_crc = crc;
+
+    if ((crc == appl_info.crc) ||
+        (appl_info.ignore_crc == ignore_appl_crc_key))
+        return true;
+
+    return false;
 }
 
 #if defined __ARMCC_VERSION && (__ARMCC_VERSION >= 6010050)
@@ -197,19 +273,39 @@ __asm(".global __ARM_use_no_argv\n");
 
 [[noreturn]] int main()
 {
+    init_minimum();
+
+    if (!is_update_requested() && is_appl_valid())
+       enter_application();
+
     init();
 
-    printf("executing bootloader\n");
+    printf("bootloader mode entered\n");
 
-    while (!user_button.is_pressed()) {
-        run_led.toggle();
-        Htsc::delay(Htsc::ms_to_ticks(100));
-    }
+    std::printf(
+        "appl_info.crc = 0x%08lx, boot_data.crc = 0x%08lx\n",
+        appl_info.crc, boot_data.appl_crc
+        );
 
-    while (user_button.is_pressed()) {
-        Htsc::delay(Htsc::ms_to_ticks(100));
-    }
+    Htsc::Ticks ts_led = 0;
+    Htsc_timer exit_timer;
+
+    exit_timer.start(no_activity_timeout);
+    do {
+        kick_watchdog();
+        exit_timer.update();
+
+        if (Htsc::is_elapsed_repetitive(ts_led, Htsc::ms_to_ticks(50)))
+            run_led.toggle();
+
+        /*
+         * Additional code implementing the firmware update come here.
+         * :
+         */
+    } while (!exit_timer.is_expired());
+
+    reset_update_request();
 
     deinit();
-    enter_application();
+    software_reset();
 }

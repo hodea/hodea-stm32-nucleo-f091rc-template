@@ -9,6 +9,7 @@
 
 #include <hodea/core/cstdint.hpp>
 #include <hodea/device/hal/device_setup.hpp>
+#include <hodea/device/hal/cpu.hpp>
 
 /**
  * Number of vector table entries including initial stack pointer.
@@ -29,15 +30,25 @@ constexpr uintptr_t appl_end_addr = 0x08003fffU;
  */
 typedef struct {
     /**
-     * Flag set by application before switching to bootloader to start
-     * a firmware update.
+     * Set by the application to \a update_requested_key to instruct the
+     * bootloader to start the firmware update.
      */
-    bool is_update_requested;
+    uint16_t update_requested;
+
+    /**
+     * CRC over application code as calculated by the bootloader.
+     *
+     * This is provided for convenience. It may be read out via a debugger
+     * at the point appl_info needs to be prepared for a new release.
+     */
+    uint32_t appl_crc;
 
     // additional data which needs to be persistent comes here...
 } Boot_data;
 
 extern Boot_data boot_data;
+
+constexpr uint16_t update_requested_key = 0xd989;
 
 /**
  * Information about the bootloader.
@@ -58,7 +69,7 @@ constexpr uint16_t boot_magic = (0xa400 | sizeof(Boot_info));
  */
 typedef struct {
     uint16_t magic;      //!< Magic number used to check integrity.
-    uint16_t ignore_crc; //!< Ignores CRC if set to ignore_appl_crc_key
+    uint16_t ignore_crc; //!< Ignores CRC if set to \a ignore_appl_crc_key.
 
     /**
      * CRC-32 over application code.
@@ -80,14 +91,53 @@ constexpr uint16_t ignore_appl_crc_key = 0xb0c1;
 constexpr uint16_t appl_magic = (0x6100 | sizeof(Appl_info));
 
 /**
+ * Test if the bootloader info structure is correct.
+ */
+static inline bool is_boot_info_sane()
+{
+    return boot_info.magic == boot_magic;
+}
+
+/**
+ * Test if the application info structure is correct.
+ */
+static inline bool is_appl_info_sane()
+{
+    return appl_info.magic == appl_magic;
+}
+
+/**
+ * Test if a firmware update is requested.
+ */
+static inline bool is_update_requested()
+{
+    return boot_data.update_requested == update_requested_key;
+}
+
+/**
+ * Signal firmware update request.
+ */
+static inline void signal_update_request()
+{
+    boot_data.update_requested = update_requested_key;
+}
+
+/**
+ * Reset firmware update request.
+ */
+static inline void reset_update_request()
+{
+    boot_data.update_requested = 0;
+}
+
+/**
  * Enter bootloader.
  *
  * This function branches to the bootloader. It does not return.
  */
 [[noreturn]] static inline void enter_bootloader()
 {
-    NVIC_SystemReset();
-    for (;;) ;              // avoid warning about [[noreturn]]
+    hodea::software_reset();
 }
 
 /**
@@ -96,5 +146,6 @@ constexpr uint16_t appl_magic = (0x6100 | sizeof(Appl_info));
  * This function branches to the application. It does not return.
  */
 [[noreturn]] void enter_application();
+
 
 #endif /*!BOOT_APPL_IF_HPP */
