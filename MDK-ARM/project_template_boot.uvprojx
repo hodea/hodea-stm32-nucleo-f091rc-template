@@ -415,6 +415,11 @@
               <FileType>8</FileType>
               <FilePath>..\hodea-lib\hodea\device\stm32\retarget_stdout_uart.cpp</FilePath>
             </File>
+            <File>
+              <FileName>bls.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\hodea-lib\hodea\device\stm32\bls.cpp</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

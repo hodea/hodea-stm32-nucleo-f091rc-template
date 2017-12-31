@@ -282,11 +282,6 @@ __asm(".global __ARM_use_no_argv\n");
 
     printf("bootloader mode entered\n");
 
-    std::printf(
-        "appl_info.crc = 0x%08lx, boot_data.crc = 0x%08lx\n",
-        appl_info.crc, boot_data.appl_crc
-        );
-
     Htsc::Ticks ts_led = 0;
     Htsc_timer exit_timer;
 
