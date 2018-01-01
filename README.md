@@ -371,3 +371,41 @@ $ git commit -a -m "project files renamed and edited"
 $ git push
 ```
 
+## Notes for Keil MDK-ARM toolchain
+
+### Compiler toochain: armcc v6.x
+
+Keil MDK-ARM is shipped with two compiler toolchains: armcc v5.x and
+armcc 6.x. The newer toolchain is based on LLVM clang.
+
+Hodea and this project template required armcc v6.x.
+
+![armcc v6.x](figures/armcc_v6x.png)
+
+### Option bytes
+
+The option bytes are located in a separate memory area and need a special
+Flash programming algorithm.
+
+![option bytes programming](figures/option_bytes_programming.png)
+
+### Bootloader and option bytes binary
+
+Within the bootloader project the fromelf command line tool is used to
+extract the bootloader and option byte binary from the ELF file.
+
+![fromelf bin](figures/fromelf_bin.png)
+
+### Single .hex file
+
+Within the application project the fromelf command line tool is used to
+generate a single .hex file, containing the bootloader, the application and
+the option bytes.
+
+![fromelf hex](figures/fromelf_hex.png)
+
+### Debugger settings
+
+The figure below shows he recommended settings for the debugger.
+
+![debugger settings](figures/debugger_settings.png)
