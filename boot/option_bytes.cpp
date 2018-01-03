@@ -37,6 +37,9 @@ constexpr unsigned rdp_level0 = 0xaa; // unprotected (default)
 constexpr unsigned rdp_level1 = 0x55; // read protection
 constexpr unsigned rdp_level2 = 0xcc; // no debug; irreversible!!
 
+constexpr unsigned wdg_sw = 1;  // watchdog enabled via software
+constexpr unsigned wdg_hw = 0;  // hardware watchdog
+
 struct Option_bytes {
     uint16_t rdp;       // read protection
     uint16_t user;      // user options, e.g. watchdog
@@ -48,11 +51,11 @@ struct Option_bytes {
     uint16_t wrp3;
 };
 
-const Option_bytes option_bytes 
+constexpr Option_bytes option_bytes 
      __attribute__((section(".option_bytes"), used)) =
 {
     .rdp = compose_option_byte(rdp_level0),
-    .user = compose_option_byte(1, 1, 1, 1, 1, 1, 1, 1),
+    .user = compose_option_byte(1, 1, 1, 1, 1, 1, 1, wdg_sw),
     .data0 = compose_option_byte(1, 1, 1, 1, 1, 1, 1, 1),
     .data1 = compose_option_byte(1, 1, 1, 1, 1, 1, 1, 1),
     .wrp0 = compose_option_byte(1, 1, 1, 1, 1, 1, 1, 1),
