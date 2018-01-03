@@ -38,6 +38,13 @@ target_include_directories(${TARGET_NAME} PRIVATE
 
 add_definitions(-DSTM32F091xC)
 
+set_property(
+    SOURCE "${CMAKE_SOURCE_DIR}/gcc/bootloader_binary.s"
+    PROPERTY OBJECT_DEPENDS
+    "${CMAKE_SOURCE_DIR}/../build/boot/bootloader.bin"
+    "${CMAKE_SOURCE_DIR}/../build/boot/option_bytes.bin"
+    )
+
 # ------------------------------------------------ compiler settings ---
 
 set(CMAKE_SYSTEM_NAME Generic)
