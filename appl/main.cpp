@@ -59,6 +59,7 @@ __asm(".global __ARM_use_no_argv\n");
     printf("executing application\n");
 
     while (!user_button.is_pressed()) {
+        kick_watchdog();
         run_led.toggle();
         Htsc::delay(Htsc::ms_to_ticks(200));
     }

@@ -30,6 +30,15 @@ LR_BOOT 0x08000000 0x00002000
   }
 }
 
+; When using Segger tools the option bytes must be located at
+; 0x06000000. Keil and ST-Link/V2 are able to handle option bytes
+; located at 0x1ffff800.
+; 
+; From the Segger Wiki:
+; > Note: The address 0x06000000 is a virtual address only. The option
+; > bytes are originally located at address 0x1FFFF800. The remap from
+; > 0x06000000 to 0x1FFFF800 is done automatically by J-Flash.
+
 LR_OPTION_BYTES 0x1FFFF800 16
 {
   OPTION_BYTES +0

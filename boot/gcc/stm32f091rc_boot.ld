@@ -20,8 +20,19 @@ MEMORY
   m_appl_vector_ram (rw)    : ORIGIN = 0x20000000, LENGTH = 0xbc
   m_boot_data (rw)          : ORIGIN = 0x200000bc, LENGTH = 0x10
   RAM (rw)                  : ORIGIN = 0x200000d0, LENGTH = 0x7f30
-  m_option_bytes (r)        : ORIGIN = 0x1ffff800, LENGTH = 0x10
-/*  m_option_bytes (r)        : ORIGIN = 0x06000000, LENGTH = 0x10 */
+
+  /*
+   * When using Segger tools the option bytes must be located at
+   * 0x06000000. Keil and ST-Link/V2 are able to handle option bytes
+   * located at 0x1ffff800.
+   *
+   * From the Segger Wiki:
+   * > Note: The address 0x06000000 is a virtual address only. The option
+   * > bytes are originally located at address 0x1FFFF800. The remap from
+   * > 0x06000000 to 0x1FFFF800 is done automatically by J-Flash.
+   */
+/*  m_option_bytes (r)        : ORIGIN = 0x1ffff800, LENGTH = 0x10 */
+  m_option_bytes (r)        : ORIGIN = 0x06000000, LENGTH = 0x10
 }
 
 /* Define output sections */
