@@ -24,7 +24,7 @@
  * What is not part of this framework is the code is the firmware upate
  * itself.
  *
- * \author f.hollerer@gmx.net
+ * \author f.hollerer@hodea.org
  */
 #include <cstdio>
 #include <cstring>

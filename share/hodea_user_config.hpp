@@ -4,7 +4,7 @@
 /**
  * User specific configuration for the HODEA source code library.
  *
- * \author f.hollerer@gmx.net
+ * \author f.hollerer@hodea.org
  */
 #if !defined HODEA_USER_CONFIG_HPP
 #define HODEA_USER_CONFIG_HPP

@@ -3,7 +3,7 @@
 
 # Helper file to include bootloader image and the option bytes into
 # the application binary.
-# @author f.hollerer@gmx.net
+# @author f.hollerer@hodea.org
 
 .section .bootloader,"a",%progbits
 

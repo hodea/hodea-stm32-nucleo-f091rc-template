@@ -3,7 +3,7 @@
 
 /**
  * Application main code.
- * \author f.hollerer@gmx.net
+ * \author f.hollerer@hodea.org
  */
 #include <cstdio>
 #include <hodea/core/cstdint.hpp>

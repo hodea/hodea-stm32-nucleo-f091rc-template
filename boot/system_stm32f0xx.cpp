@@ -18,7 +18,7 @@
  *
  * \sa http://www.keil.com/pack/doc/cmsis/Core/html/group__system__init__gr.html
  *
- * \author f.hollerer@gmx.net
+ * \author f.hollerer@hodea.org
  */
 
 #include <hodea/core/cstdint.hpp>

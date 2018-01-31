@@ -3,7 +3,7 @@
 
 /**
  * Option bytes.
- * \author f.hollerer@gmx.net
+ * \author f.hollerer@hodea.org
  */
 #include <hodea/core/cstdint.hpp>
 #include <hodea/core/bitmanip.hpp>
