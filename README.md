@@ -7,11 +7,15 @@ hoda-lib**
 <table>
   <tr>
     <td>Homepage:</td>
-    <td>http://www.hodea.org</td>
+    <td><a href="http://www.hodea.org">http://www.hodea.org</a></td>
   </tr>
   <tr>
     <td>Source code:</td>
-    <td>https://github.com/hodea/hodea-stm32f0-project-template</td>
+    <td>
+        <a href="https://github.com/hodea/hodea-stm32f0-project-template">
+          https://github.com/hodea/hodea-stm32f0-project-template
+        </a>
+    </td>
   </tr>
 </table>
 
