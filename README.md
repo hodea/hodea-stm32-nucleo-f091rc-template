@@ -1,4 +1,21 @@
 # hodea-stm32f0-project-template
+**Template for firmware split into bootloader and application using
+hoda-lib**
+
+![logo](https://raw.github.com/hodea/hodea.github.io/master/logo/hodea_logo.png)
+
+<table>
+  <tr>
+    <td>Homepage:</td>
+    <td>http://www.hodea.org</td>
+  </tr>
+  <tr>
+    <td>Source code:</td>
+    <td>https://github.com/hodea/hodea-stm32f0-project-template</td>
+  </tr>
+</table>
+
+---
 
 ## Introduction
 
